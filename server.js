@@ -22,3 +22,14 @@ app.get('/customers', async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+app.get('/resetCustomers', async (req, res) => {
+    const [message, error] = await da.restCustomers();
+    if(message) {
+      res.send(message);
+      return;
+  } else {
+    console.error('Error resetting customers:', error);
+    res.status(500).send(error);
+  }
+});

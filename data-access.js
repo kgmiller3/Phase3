@@ -29,6 +29,26 @@ async function getCustomers() {
   }
 }
 
+async function restCustomers() {
+    let defaultCustomers = [{ "id": 0, "name": "Mary Jackson", "email": "maryj@abc.com", "password": "maryj" },
+    { "id": 1, "name": "Karen Addams", "email": "karena@abc.com", "password": "karena" },
+    { "id": 2, "name": "Scott Ramsey", "email": "scottr@abc.com", "password": "scottr" }];
+
+    try {
+        if (!collection) {  
+            await connectToDatabase();
+        }   
+        await collection.deleteMany({});
+        await collection.insertMany(defaultCustomers);  
+        const customers = await collection.find({}).toArray();
+        const message = "Data has been reset.  There are now " + customers.length + " customers in the database.";
+        return [message, null];
+    } catch (error) {
+        console.error('Error resetting customers:', error.message);
+        return [null, error.message];
+    }
+}
+
 
 connectToDatabase();
-module.exports = { getCustomers};
+module.exports = { getCustomers, restCustomers };
