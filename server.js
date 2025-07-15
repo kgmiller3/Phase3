@@ -13,11 +13,12 @@ app.listen(port, () => {
 });
 
 app.get('/customers', async (req, res) => {
-  try {
-    const customers = await da.getCustomers();
-    res.json(customers);
-  } catch (error) {
+    const [customers, error] = await da.getCustomers();
+    if(customers) {
+      res.send(customers);
+      return;
+  } else {
     console.error('Error fetching customers:', error);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send(error);
   }
 });

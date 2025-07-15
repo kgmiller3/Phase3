@@ -22,10 +22,10 @@ async function getCustomers() {
       await connectToDatabase();
     }
     const customers = await collection.find({}).toArray();
-    return customers;
+    return [customers, null];
   } catch (error) {
-    console.error('Error fetching customers:', error);
-    throw error;
+    console.error('Error fetching customers:', error.message);
+    return [null, error.message];
   }
 }
 
