@@ -49,6 +49,21 @@ async function restCustomers() {
     }
 }
 
+async function addCustomer(newCustomer) { 
+    try {
+        if (!collection) {
+            await connectToDatabase();
+        }
+        const result = await collection.insertOne(newCustomer);
+        return ["success", result.insertedId, null];
+    } catch (error) {
+        console.error('Error adding customer:', error.message);
+        return ["fail",null, error.message];
+    }
+}   
+
+
+
 
 connectToDatabase();
-module.exports = { getCustomers, restCustomers };
+module.exports = { getCustomers, restCustomers, addCustomer };
