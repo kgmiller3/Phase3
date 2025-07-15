@@ -62,8 +62,22 @@ async function addCustomer(newCustomer) {
     }
 }   
 
-
+async function getCustomerById(id) {
+    try {
+        if (!collection) {
+            await connectToDatabase();
+        }
+        const customer = await collection.findOne({ "id": +id });
+        if (!customer) {
+            return [null, `Customer with ID ${id} not found`];
+        }   
+        return [customer, null];
+    } catch (error) {
+        console.error('Error fetching customer by ID:', error.message);
+        return [null, error.message];
+    }
+}   
 
 
 connectToDatabase();
-module.exports = { getCustomers, restCustomers, addCustomer };
+module.exports = { getCustomers, restCustomers, addCustomer, getCustomerById };

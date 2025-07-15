@@ -36,6 +36,20 @@ app.get('/resetCustomers', async (req, res) => {
   }
 });
 
+app.get('/customers/:id', async (req, res) => {
+    const id = req.params.id;
+    const [customer, error] = await da.getCustomerById(id);
+    if (customer) {
+        res.send(customer);
+    }
+    else {
+        console.error('Error fetching customer by ID:', error);
+        res.status(404).send(error);
+        return;
+    }
+   
+});
+
 app.post('/customers', async (req, res) => {
     if (!req.body) {
         res.status(400).send('No customer data provided');
