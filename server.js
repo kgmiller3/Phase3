@@ -96,3 +96,20 @@ app.put('/customers/:id', async (req, res) => {
                 res.status(500).send('Internal server error');
             }
         });
+
+app.delete('/customers/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const [message, error] = await da.deleteCustomer(id);
+        if (message) {
+            res.send(message);
+        } else {
+            console.error('Error deleting customer:', error);
+            res.status(400).send(error);
+        }
+    } catch (err) {
+        console.error('Exception deleting customer:', err);
+        res.status(500).send('Internal server error');
+    }
+        });
+

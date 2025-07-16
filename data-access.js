@@ -95,5 +95,25 @@ async function updateCustomer(updatedCustomer) {
     }
 }
 
+async function deleteCustomer(id) {
+    try {
+        if (!collection) {
+            await connectToDatabase();
+        }
+        const result = await collection.deleteOne({ "id": +id });
+        if (result.deletedCount === 0) {    
+            return [null, `No record deleted. Customer with ID ${id} not found`];
+        }
+        else {
+            return [`success: deleted customer ${id}`, null];
+        }   
+    } catch (error) {
+        console.error('Error deleting customer:', error.message);
+        return [null, error.message];
+    }
+}
+
+
 connectToDatabase();
-module.exports = { getCustomers, restCustomers, addCustomer, getCustomerById, updateCustomer };
+module.exports = { getCustomers, restCustomers, addCustomer, getCustomerById,
+     updateCustomer, deleteCustomer };
