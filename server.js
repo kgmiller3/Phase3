@@ -25,7 +25,7 @@ app.get('/customers', async (req, res) => {
   }
 });
 
-app.get('/resetCustomers', async (req, res) => {
+app.get('/reset', async (req, res) => {
     const [message, error] = await da.restCustomers();
     if(message) {
       res.send(message);
@@ -70,3 +70,29 @@ app.post('/customers', async (req, res) => {
         res.status(400).send(error.message);
     }
 });
+
+app.put('/customers/:id', async (req, res) => {
+    
+    const id = req.params.id;
+    const updatedCustomer = req.body;
+    if (!updatedCustomer) {
+        res.status(400).send('No customer data provided');  
+    }
+    if (!updatedCustomer || !updatedCustomer.name || !updatedCustomer.email || !updatedCustomer.password) {
+        res.status(400).send('Invalid customer data');
+        return;
+    }
+    delete updatedCustomer._id ;
+    try {
+        const [message, error] = await da.updateCustomer(updatedCustomer);
+        if (message) {
+            res.send(message);
+                } else {
+                    console.error('Error updating customer:', error);
+                    res.status(400).send(error);
+                }
+            } catch (err) {
+                console.error('Exception updating customer:', err);
+                res.status(500).send('Internal server error');
+            }
+        });

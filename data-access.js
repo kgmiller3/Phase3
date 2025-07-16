@@ -78,6 +78,22 @@ async function getCustomerById(id) {
     }
 }   
 
+async function updateCustomer(updatedCustomer) {
+    try {
+        if (!collection) {
+            await connectToDatabase();
+        }
+        const result = await collection.updateOne({ "id": updatedCustomer.id }, { $set: updatedCustomer });
+        if (result.matchedCount === 0) {
+            return [null, `Customer with ID ${updatedCustomer.id} not found`];
+        }
+        return [`success: updated customer ${updatedCustomer.id}`, null];
+    } catch (error) {
+        console.error('Error updating customer:', error.message);
+        return [null, error.message];
+
+    }
+}
 
 connectToDatabase();
-module.exports = { getCustomers, restCustomers, addCustomer, getCustomerById };
+module.exports = { getCustomers, restCustomers, addCustomer, getCustomerById, updateCustomer };
