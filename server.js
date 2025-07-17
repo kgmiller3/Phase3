@@ -4,6 +4,7 @@ const da = require("./data-access");
 const bodyParser = require('body-parser');
 
 const validateApiKey = require("./authorization").validateApiKey;
+const createNewApiKey = require("./authorization").createNewApiKey;
 
 
 const app = express();
@@ -25,6 +26,17 @@ app.get('/customers', validateApiKey, async (req, res) => {
     console.error('Error fetching customers:', error);
     res.status(500).send(error);
   }
+});
+
+app.get('/apikey',  (req, res) => {
+    let email = req.query.email;
+    if (email) {
+        const newApiKey = createNewApiKey(email);
+        res.send({ newApiKey });
+    }
+    else {
+        res.status(400).send('Email query parameter is required to create a new API key');
+    }   
 });
 
 app.get('/reset', validateApiKey, async (req, res) => {
