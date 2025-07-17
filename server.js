@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const validateApiKey = require("./authorization").validateApiKey;
 const createNewApiKey = require("./authorization").createNewApiKey;
+const clearApiKeys = require("./authorization").clearApiKeys;
 
 
 const app = express();
@@ -27,6 +28,12 @@ app.get('/customers', validateApiKey, async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+app.get('/clearApiKeys', validateApiKey, (req, res) => {
+    clearApiKeys();
+    res.send('API keys cleared');
+});
+
 
 app.get('/apikey',  (req, res) => {
     let email = req.query.email;
