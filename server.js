@@ -8,6 +8,7 @@ const createNewApiKey = require("./authorization").createNewApiKey;
 const clearApiKeys = require("./authorization").clearApiKeys;
 
 
+
 const app = express();
 const port = process.env.PORT || 4000; 
 app.use(bodyParser.json());
@@ -56,6 +57,54 @@ app.get('/reset', validateApiKey, async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+app.get('/customers/find', async (req, res) => {
+    const filterParams = req.query;
+    const filters = ["id", "name", "email"];
+    if (!filterParams || Object.keys(filterParams).length === 0) {
+        res.status(400).send('No filter provided');
+        return;
+    }
+    const queryParamsKeys = Object.keys(req.query);
+    if (queryParamsKeys.length === 0) {
+        res.status(400).send('query string is required');
+        return;
+    }
+    if (queryParamsKeys.length > 1) {
+        res.status(400).send('Only one query parameter is allowed');    
+        return;
+    }
+    let filter = queryParamsKeys[0];
+
+    if (!filters.includes(filter)){
+        res.status(400).send('Invalid filter parameter. Allowed parameters are: ' + filters.join(', '));
+        return;
+    }
+    let mongoQuery = {};
+    if (filter === 'id') {
+        const id = parseInt(filterParams[filter]);
+        if (isNaN(id)) {
+            res.status(400).send('Invalid id provided');
+            return;
+        }
+        mongoQuery[filter] = id;
+    } else {
+        if (!filterParams[filter] || filterParams[filter].trim() === '') {
+            res.status(400).send(`Invalid ${filter} provided`);
+            return;
+        }  
+        mongoQuery[filter] = filterParams[filter];
+    }
+    const [customer, error] = await da.getCustomerByFilter(mongoQuery);
+    if (customer) {
+        res.send(customer);
+    } else {
+        res.status(404).send(error);
+    }
+}
+);
+
+
 
 app.get('/customers/:id', validateApiKey, async (req, res) => {
     const id = req.params.id;

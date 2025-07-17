@@ -29,6 +29,24 @@ async function getCustomers() {
   }
 }
 
+async function getCustomerByFilter(filter) {
+    try {
+        if (!collection) {
+            await connectToDatabase();
+        }
+        if (typeof filter !== 'object' || Object.keys(filter).length === 0) {
+            return [null, 'Invalid filter provided'];
+        }
+        const customer = await collection.find(filter).toArray();
+        if (!customer || customer.length === 0) {
+            return [null, 'no matching customer documents found'];
+        }
+        return [customer, null];
+    } catch (error) {
+        return [null, error.message];
+    }
+}
+
 async function restCustomers() {
     let defaultCustomers = [{ "id": 0, "name": "Mary Jackson", "email": "maryj@abc.com", "password": "maryj" },
     { "id": 1, "name": "Karen Addams", "email": "karena@abc.com", "password": "karena" },
@@ -116,4 +134,4 @@ async function deleteCustomer(id) {
 
 connectToDatabase();
 module.exports = { getCustomers, restCustomers, addCustomer, getCustomerById,
-     updateCustomer, deleteCustomer };
+     updateCustomer, deleteCustomer, getCustomerByFilter};
