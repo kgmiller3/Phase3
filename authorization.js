@@ -67,7 +67,6 @@ function validateApiKey(req, res, next) {
         res.status(401).send('Invalid API key');
         return; 
     }
-
     next();
 }
 
