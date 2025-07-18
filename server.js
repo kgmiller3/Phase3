@@ -137,7 +137,7 @@ app.post('/customers', validateApiKey, async (req, res) => {
         res.status(201).send({ message: 'Customer added successfully',newCustomer });
     } else {
         console.error('Error adding customer:', error);
-        res.status(400).send(error.message);
+        res.status(400).send(error);
     }
 });
 

@@ -81,6 +81,12 @@ async function incrementId() {
 
 
 async function addCustomer(newCustomer) { 
+    const dupCheck = await collection.findOne({ "email": newCustomer.email });
+    if (dupCheck) {
+        console.error('Customer with this email already exists:', newCustomer.email);
+    
+        return ["fail", null, 'Customer with this email already exists'];
+    }   
     const newId = await incrementId();
     newCustomer["id"] = newId;
     try {
