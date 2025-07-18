@@ -48,9 +48,9 @@ async function getCustomerByFilter(filter) {
 }
 
 async function restCustomers() {
-    let defaultCustomers = [{ "id": 0, "name": "Mary Jackson", "email": "maryj@abc.com", "password": "maryj" },
-    { "id": 1, "name": "Karen Addams", "email": "karena@abc.com", "password": "karena" },
-    { "id": 2, "name": "Scott Ramsey", "email": "scottr@abc.com", "password": "scottr" }];
+    let defaultCustomers = [{ "id": "CUST001", "name": "Mary Jackson", "email": "maryj@abc.com", "password": "maryj" },
+    { "id": "CUST002", "name": "Karen Addams", "email": "karena@abc.com", "password": "karena" },
+    { "id": "CUST003", "name": "Scott Ramsey", "email": "scottr@abc.com", "password": "scottr" }];
 
     try {
         if (!collection) {  
@@ -67,7 +67,22 @@ async function restCustomers() {
     }
 }
 
+async function incrementId() {
+    // will only work until CUST999
+  const cust = await collection.find().sort({"id":-1}).limit(1).toArray() ;
+  id = cust[0].id; // Assuming id is a string like "CUST001"
+  const prefix = id.slice(0, 4); // Get "CUST"
+  let number = parseInt(id.slice(4)); // Get 1 (from "001")
+  number++; // Increment to 2
+  const newNumber =  String(number).padStart(3, '0'); // Pad with leading zeros: "002"
+  newId = prefix + newNumber; // Combine to form "CUST002"
+  return newId;
+}
+
+
 async function addCustomer(newCustomer) { 
+    const newId = await incrementId();
+    newCustomer["id"] = newId;
     try {
         if (!collection) {
             await connectToDatabase();
@@ -85,7 +100,8 @@ async function getCustomerById(id) {
         if (!collection) {
             await connectToDatabase();
         }
-        const customer = await collection.findOne({ "id": +id });
+        const customer = await collection.findOne({ "id": id });
+        
         if (!customer) {
             return [null, `Customer with ID ${id} not found`];
         }   
