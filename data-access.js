@@ -134,7 +134,7 @@ async function deleteCustomer(id) {
         if (!collection) {
             await connectToDatabase();
         }
-        const result = await collection.deleteOne({ "id": +id });
+        const result = await collection.deleteOne({ "id": id });
         if (result.deletedCount === 0) {    
             return [null, `No record deleted. Customer with ID ${id} not found`];
         }
